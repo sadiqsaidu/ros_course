@@ -1,0 +1,525 @@
+ROS2 Fundamentals Course Curriculum
+Project-Based Learning Approach | 4 Weeks | 11 Total Classes | 60 Minutes/Class
+Course Project: Autonomous Delivery Robot
+
+Students will build a complete software system for a delivery robot that navigates a warehouse, receives delivery tasks, and reports its status.
+
+
+
+Week 1: The Big Picture & Foundation (2 Classes)
+Day 1: The Project Vision & Introduction to ROS2
+
+Objective: Understand the project and why ROS2 solves robotics challenges
+
+The Story (15 min)
+
+? Introduce the delivery robot scenario
+? What needs to happen: receive orders, navigate, avoid obstacles, report status
+? The challenge: multiple systems need to work together (sensors, motors, decision-making, user interface)
+? Draw the system architecture on board: what components do we need?
+
+Why ROS2? (15 min)
+
+? The problem: how do separate programs communicate?
+? ROS2 solution: a framework that lets programs talk to each other
+? Key concept: Everything is a node (independent program/process)
+? Show diagram: our delivery robot will have multiple nodes working together
+
+Your First Node (25 min)
+
+? What is a node? A single program with one responsibility
+? Create a simple robot_brain node
+? Running and inspecting nodes with ros2 node commands
+? Hands-on: Students create their first node
+
+Project Context: "This is the brain of our robot - it will eventually make decisions, but for now it just exists"
+
+Homework: Create a battery_monitor node that just prints "Battery Monitor Active"
+
+
+
+Day 2: Nodes Talking - Introduction to Topics (Publishers & Subscribers)
+
+Objective: Learn how nodes share and receive continuous data streams
+
+The Challenge (10 min)
+
+? Our robot has sensors (camera, lidar, battery) that constantly generate data
+? Multiple nodes need this data simultaneously
+? How do we share streaming data efficiently?
+
+Topics & Publishers (15 min)
+
+? Topics: Named channels for continuous data streams
+? Publisher: A node that sends data on a topic
+? Message types: Standard formats for different data (String, Int, custom types)
+? The publish-subscribe pattern explained with real-world analogy (radio station)
+
+Hands-On: Robot Status Publisher (15 min)
+
+? Create a battery_monitor node that publishes battery percentage
+? Use std_msgs/Float32 message type
+? Topic name: /robot/battery_level
+? Use ros2 topic commands to see the data flowing
+
+Subscribers & Callbacks (10 min)
+
+? Subscriber: Listens to a topic and reacts to new messages
+? Callback function: What happens when new data arrives
+? One publisher, many subscribers concept
+
+Hands-On: Robot Dashboard (10 min)
+
+? Create a dashboard node that subscribes to battery
+? Display information in a formatted way
+? Demonstrate subscriber receiving data
+
+Project Context: "Our robot's battery constantly reports its level, and our dashboard displays it in real-time. This is how sensor data flows through the system."
+
+Homework:
+
+1. Create a speed_sensor node that publishes current robot speed on /robot/speed
+2. Update the dashboard to also display speed
+3. Create a safety_monitor node that warns if battery < 20%
+
+
+
+Week 2: Communication Patterns (3 Classes)
+Day 3: Multiple Subscribers & Data Processing Objective: Build more complex topic-based systems Review & Expand (10 min)
+? Review homework: speed sensor and safety monitor
+? Discuss: Why multiple nodes subscribing to same topic is powerful
+
+The Challenge (10 min)
+
+? We need to process sensor data before using it
+? Example: Filter noisy speed readings, combine multiple sensors
+? Introduce the data processing pipeline concept
+
+Hands-On: Data Processing Chain (35 min)
+
+? Create a sensor_filter node that:
+? Subscribes to raw speed data
+? Applies moving average filter
+? Publishes filtered data on /robot/speed_filtered
+? Update dashboard to show both raw and filtered data
+? Create a status_aggregator node that combines battery and speed into a single status message
+
+Project Context: "Real sensors are noisy. We create processing nodes that clean data before other nodes use it. This is like an assembly line - each node does one job well."
+
+Homework: Create a performance_monitor node that subscribes to both battery and speed, and publishes an alert if the robot is going too fast with low battery
+
+
+
+Day 4: Request-Response Communication - Services
+
+Objective: Understand when we need two-way, one-time communication
+
+The Challenge (10 min)
+
+? Topics are great for streams, but what about one-time requests?
+? Examples: "Where is the robot right now?", "What's the current task?", "Reset the odometry"
+? We need guaranteed responses, not just broadcasting
+
+Services vs Topics (10 min)
+
+? Service: Request-response pattern (like asking a question)
+? When to use topics vs services decision tree
+? Service consists of: request message + response message
+? Blocking vs non-blocking calls
+
+Hands-On: Location Service (35 min)
+
+? Create a localization node with a service: get_location
+? Service returns current robot coordinates (x, y)
+? Simulate robot position (changes over time)
+? Create a client node that calls the service
+? Use ros2 service commands to test manually
+? Demonstrate difference: calling service vs subscribing to position topic
+
+Project Context: "When the task planner needs to know where the robot is RIGHT NOW (not 2 seconds ago), it asks the localization service and waits for a precise answer."
+
+Homework: Create a task_query service that returns the current delivery task information (destination, package_id, status)
+
+
+
+Day 5: Building Service-Based Control Systems Objective: Build more sophisticated request-response patterns The Challenge (10 min)
+? Our robot needs to receive delivery tasks from the warehouse system
+? We need to validate the task before accepting it
+? We need to return success/failure with meaningful messages
+
+Service Design Patterns (15 min)
+
+? Request: what information to send (destination, package_id, priority)
+
+? Response: success/failure + detailed message
+? Error handling and validation
+? Service best practices (naming, error codes)
+
+Hands-On: Task Management System (30 min)
+
+? Create task_manager node with multiple services:
+? assign_task: Accept new delivery tasks
+? cancel_task: Cancel current task
+? get_task_status: Query current task state
+? Validate coordinates are within warehouse bounds
+? Track task state (idle, active, completed, failed)
+? Create client to test submitting and managing tasks
+
+Project Context: "The warehouse management system calls our robot's services to control it. Services let external systems interact with our robot in a controlled, validated way."
+
+Homework: Add a reset_robot service that resets the robot to initial state (position, clear tasks, reset counters)
+
+
+
+Week 3: Configuration, Long-Running Tasks & Integration (3 Classes)
+Day 6: Making Nodes Configurable - Parameters
+
+Objective: Create flexible, reusable nodes
+
+The Challenge (10 min)
+
+? Our battery monitor updates every 1 second, but different use cases need different rates
+? Low battery threshold should be adjustable
+? Different robots or warehouses need different configurations
+? We want to change settings without modifying code or restarting nodes
+
+Parameters Explained (15 min)
+
+? Parameters: Configuration values that can be changed without modifying code
+? Declaring parameters with default values
+? Reading and using parameters in nodes
+? Setting parameters from command line and at runtime
+? Parameter callbacks for dynamic reconfiguration
+
+Hands-On: Configurable System (30 min)
+
+? Add parameters to battery_monitor: update_rate, low_battery_threshold, critical_battery_threshold
+? Add parameters to task_manager: max_queue_size, warehouse_bounds_x, warehouse_bounds_y
+? Add parameters to sensor_filter: filter_window_size
+? Modify nodes to use these parameters
+? Launch with different parameter values
+? Demonstrate dynamic reconfiguration using ros2 param set
+
+Project Context: "Now we can use the same code on different robots or in different warehouses, just with different parameters. We can even tune behavior while the robot is running without restarting anything!"
+
+Homework: Add parameters to all your existing nodes (at least 2 parameters per node that make sense for configuration)
+
+
+
+Day 7: Actions - Long-Running Tasks with Feedback (Part 1)
+
+Objective: Handle tasks that take time and provide progress updates
+
+The Challenge (10 min)
+
+? Topics: continuous streams, no guarantee of delivery
+? Services: instant request-response, no progress updates
+? But what about tasks that take 30 seconds? (navigation, charging, picking packages)
+? We need: progress updates, ability to cancel, final result
+
+Actions Explained (15 min)
+
+? Actions: For long-running, goal-oriented tasks with feedback
+? Three components:
+? Goal: What to do (navigate to x,y)
+? Feedback: Progress updates (distance remaining, % complete)
+? Result: Final outcome (success/failure, final position)
+? Can be canceled mid-execution
+? Use cases in robotics: navigation, manipulation, charging
+
+Hands-On: Navigation Action Server (30 min)
+
+? Create custom action definition (or use example action type)
+? Goal: target coordinates (x, y)
+
+? Feedback: current position, distance remaining, estimated time
+? Result: success (bool), final position, time taken
+? Create navigation_controller node as action server
+? Simulate movement toward goal with loop and timer
+? Publish feedback every 0.5 seconds
+? Handle goal cancellation
+
+Project Context: "When tasked with a delivery, our robot navigates to the destination. This takes time, so we use an action to track progress, report updates, and allow cancellation if priorities change."
+
+Homework: Add obstacle detection simulation - randomly pause navigation and report it in feedback
+
+
+
+Day 8: Actions - Clients & Task Coordination (Part 2) Objective: Send goals, monitor progress, and coordinate complex workflows The Challenge (10 min)
+? Our task manager receives delivery requests (service)
+? It needs to send the robot to locations (action)
+? It must monitor progress and handle failures
+? It should coordinate multiple deliveries in sequence
+
+Action Clients (15 min)
+
+? Creating action clients
+? Sending goals asynchronously
+? Receiving and processing feedback callbacks
+? Handling results (success/failure/canceled)
+? Canceling goals programmatically
+
+Hands-On: Intelligent Task Coordinator (30 min)
+
+? Create task_coordinator node (action client + service server)
+? Accept delivery tasks via service
+? Send navigation goals to navigation_controller (action)
+? Display real-time progress from feedback
+? Implement cancellation logic if new high-priority task arrives
+? Handle navigation failures with retry logic
+? Track delivery history
+
+Project Context: "The task coordinator is the 'manager' - it receives delivery requests from the warehouse system (service) and orchestrates robot movement (action), monitoring everything and making intelligent decisions."
+
+Homework: Add a task queue - handle multiple pending deliveries and execute them in sequence
+
+
+
+Day 9: Full System Integration Workshop
+
+Objective: Connect all components into a working delivery robot system
+
+System Architecture Review (15 min)
+
+? Draw complete system diagram on board together
+? Topics (continuous data):
+? /robot/battery_level - battery sensor
+? /robot/speed - speed sensor
+? /robot/speed_filtered - filtered speed
+? /robot/status - aggregated status
+? /robot/alerts - safety alerts
+? Services (request-response):
+? /get_location - query current position
+? /assign_task - assign delivery
+? /cancel_task - cancel current task
+? /get_task_status - query task state
+? Actions (long-running tasks):
+? /navigate_to_goal - navigation with feedback
+? Parameters: Configurations for all nodes
+
+Hands-On: Complete System Integration (40 min)
+
+? Students run their complete system:
+1. Start all sensor nodes (battery, speed)
+2. Start processing nodes (filter, aggregator)
+3. Start monitoring nodes (dashboard, safety_monitor)
+4. Start service nodes (localization, task_manager)
+5. Start action nodes (navigation_controller, task_coordinator)
+? Test full delivery workflow:
+1. Monitor robot status on dashboard
+2. Assign delivery task via service
+3. Watch navigation action with real-time feedback
+4. See safety monitor react to battery levels
+
+5. Cancel and reassign tasks
+6. Adjust parameters dynamically
+? Troubleshooting session: common integration issues and solutions
+
+Project Context: "This is your complete delivery robot system! Multiple independent nodes working together seamlessly through topics, services, and actions."
+
+Homework:
+
+1. Document your system (draw diagram, list all nodes and their communications)
+2. Identify one improvement or feature to add
+3. Prepare questions about anything unclear
+
+
+
+Week 4: Professional Workflows & Course Completion (3 Classes)
+Day 10: Launch Files - Professional System Management Objective: Start complex systems with one command like a professional The Challenge (10 min)
+? Current situation: manually start 8-10 nodes, set parameters individually
+? Real robotics: systems with 50+ nodes
+? Need different configurations: testing vs production, different warehouses
+? Need team members to run system without knowing every detail
+
+Launch Files Explained (15 min)
+
+? What launch files do and why they're essential in professional robotics
+? Python launch file structure and syntax
+? Launch file components: nodes, parameters, arguments, remapping
+? Best practices for organization
+
+Hands-On: Delivery Robot Launch File (30 min)
+
+? Create delivery_robot.launch.py in a launch folder
+? Launch all nodes systematically:
+? Sensor nodes: battery_monitor, speed_sensor
+? Processing nodes: sensor_filter, status_aggregator
+? Monitoring nodes: dashboard, safety_monitor, performance_monitor
+? Service nodes: localization, task_manager
+
+? Action nodes: navigation_controller, task_coordinator
+? Set parameters for each node directly in launch file
+? Add topic remapping examples
+? Test: one command starts entire system!
+
+Project Context: "Professional robots have complex systems. Instead of 10+ terminal commands, we run one: ros2 launch delivery_robot delivery_robot.launch.py and the entire system comes alive!"
+
+Homework: Create a minimal launch file (minimal_robot.launch.py) that only starts essential nodes for testing
+
+
+
+Day 11: Advanced Launch Files & Flexible Configuration
+
+Objective: Create adaptable launch files for different scenarios
+
+The Challenge (10 min)
+
+? Different warehouses have different layouts and requirements
+? Testing needs different settings than production
+? Want to enable/disable certain features (debug mode, safety checks)
+? Need to share configuration across team without editing code
+
+Advanced Launch Techniques (20 min)
+
+? Launch arguments: runtime configuration
+? Conditional node launching (launch nodes only if condition met)
+? Including other launch files (modularity)
+? YAML parameter files (separate configuration from launch logic)
+? Environment variables and substitutions
+? Launch file organization patterns
+
+Hands-On: Production-Ready Launch System (25 min)
+
+? Add launch arguments:
+? warehouse:=warehouse_a (warehouse_a, warehouse_b, warehouse_c)
+? debug:=false (enable/disable debug logging)
+? enable_safety:=true (enable/disable safety monitor)
+? simulation:=false (for future simulation mode)
+? Create YAML parameter files:
+? warehouse_a_params.yaml
+? warehouse_b_params.yaml
+
+? debug_params.yaml
+? Load parameters from YAML based on arguments
+? Conditionally launch nodes (safety monitor only if enabled)
+? Create modular launch files:
+? sensors.launch.py - all sensors
+? processing.launch.py - data processing
+? control.launch.py - task management and navigation
+? delivery_robot.launch.py - includes all above
+
+Project Context: "Now run: ros2 launch delivery_robot delivery_robot.launch.py warehouse:=warehouse_b debug:=true enable_safety:=false - the same code adapts to different scenarios!"
+Homework:
+
+1. Finalize your entire delivery robot system
+2. Create parameter files for at least 2 different warehouse configurations
+3. Test your launch files thoroughly
+4. Prepare for final demonstration
+
+
+
+Day 12: Final Project Demonstration & Course Wrap-Up Objective: Demonstrate complete system and transition to next phase Final System Requirements Review (10 min)
+? Review what a complete system must demonstrate:
+? ? Single launch command starts everything
+? ? Real-time sensor monitoring (battery, speed)
+? ? Data processing and filtering
+? ? Status dashboard displaying all information
+? ? Safety monitoring with alerts
+? ? Task assignment via service
+? ? Navigation with progress feedback (action)
+? ? Task cancellation and re-assignment
+? ? Parameter configuration without code changes
+? ? Multi-warehouse support via launch arguments
+
+Student Project Demonstrations (30 min)
+
+? Each student (or group) demonstrates their delivery robot system:
+? Launch system with one command
+
+? Show different configurations (different warehouses)
+? Assign delivery task and show navigation
+? Demonstrate safety monitoring
+? Show parameter adjustment in real-time
+? Demonstrate task cancellation
+? Show system responding to changing conditions
+? Peer feedback and discussion
+
+Lessons Learned & Best Practices (10 min)
+
+? Common challenges faced and how they were solved
+? Design patterns that worked well
+? What would you do differently?
+? ROS2 best practices summary:
+? Single responsibility per node
+? Choose right communication pattern (topic/service/action)
+? Make everything configurable with parameters
+? Use launch files for complex systems
+? Document your system architecture
+
+Looking Ahead: The Next Phase (10 min)
+
+? What you've built: The complete "software brain" of a robot
+
+? Communication infrastructure ?
+? Task management ?
+? Monitoring and safety ?
+? Professional workflows ?
+? What your partner will teach (next 2 weeks):
+
+? Gazebo: Run your nodes with a simulated 3D robot
+¦ Your nodes will control a virtual robot!
+¦ Test navigation without physical hardware
+? RViz: Visualize what your robot "sees"
+¦ See sensor data visually
+¦ Visualize navigation paths
+? TF (Transforms): Coordinate systems
+¦ Where is the camera relative to the robot base?
+¦ Critical for sensor fusion
+? URDF: Robot description
+¦ Define your robot's physical structure
+¦ Link geometry and sensors
+? The beautiful part: Your nodes will work with minimal changes!
+
+? Same topics, services, actions
+
+? Same launch files
+? Just add visualization and simulation
+
+Q&A and Closing (remaining time)
+
+? Open floor for any questions
+? Share resources for continued learning
+? Celebrate what was accomplished!
+
+
+
+Course Materials Needed
+? Computer with Ubuntu 22.04 (or ROS2 Humble compatible OS)
+? ROS2 Humble installed
+? Text editor or IDE (VS Code recommended)
+? Terminal access
+? Git (for version control - optional but recommended)
+
+Assessment Strategy
+Formative Assessment (Throughout):
+
+? Daily hands-on exercises (in-class participation)
+? Homework assignments (build skills incrementally)
+? Code reviews during class (peer learning)
+
+Summative Assessment (End):
+
+? Final integrated delivery robot system demonstration
+? Must demonstrate all required features
+? Code quality and organization
+? System documentation (architecture diagram, node descriptions)
+
+Success Criteria
+By course end, students should independently be able to:
+
+? Design multi-node ROS2 systems for robotics applications
+? Choose appropriate communication patterns (topics/services/actions)
+? Implement publishers, subscribers, service servers/clients, action servers/clients
+? Configure systems using parameters
+? Create professional launch files with arguments and YAML configs
+? Debug and troubleshoot ROS2 systems using command-line tools
+
+? Document and explain their system architecture
+
+Homework Philosophy
+Each homework assignment builds directly on class work and prepares for the next class. Homework should take 30-45 minutes and reinforces the day's concepts in the project context.
+
+
+
+This curriculum seamlessly transitions students from absolute beginners to having a complete, professional-grade ROS2 system that they deeply understand because they built it piece by piece in a meaningful context!
