@@ -703,7 +703,10 @@ if __name__ == '__main__':
               <h4 className="font-bold text-zinc-900 mb-3">Step 1: Run the node</h4>
               <TerminalBlock 
                 command="python3 battery_monitor.py"
-                output="[INFO] [battery_monitor]: Battery Monitor started!\n[INFO] [battery_monitor]: Battery: 100.0%\n[INFO] [battery_monitor]: Battery: 99.5%\n[INFO] [battery_monitor]: Battery: 99.0%"
+                output={`[INFO] [battery_monitor]: Battery Monitor started!
+[INFO] [battery_monitor]: Battery: 100.0%
+[INFO] [battery_monitor]: Battery: 99.5%
+[INFO] [battery_monitor]: Battery: 99.0%`}
                 title="Terminal 1"
               />
             </div>
@@ -712,7 +715,9 @@ if __name__ == '__main__':
               <h4 className="font-bold text-zinc-900 mb-3">Step 2: In another terminal, check what topics exist</h4>
               <TerminalBlock 
                 command="ros2 topic list"
-                output="/battery_level\n/parameter_events\n/rosout"
+                output={`/battery_level
+/parameter_events
+/rosout`}
                 title="Terminal 2"
               />
             </div>
@@ -721,7 +726,12 @@ if __name__ == '__main__':
               <h4 className="font-bold text-zinc-900 mb-3">Step 3: Listen to the topic directly from terminal</h4>
               <TerminalBlock 
                 command="ros2 topic echo /battery_level"
-                output="data: 95.5\n---\ndata: 95.0\n---\ndata: 94.5\n---"
+                output={`data: 95.5
+---
+data: 95.0
+---
+data: 94.5
+---`}
                 title="Terminal 2"
               />
             </div>
@@ -839,14 +849,20 @@ if __name__ == '__main__':
             <div>
               <TerminalBlock 
                 command="python3 battery_monitor.py"
-                output="[INFO] [battery_monitor]: Battery Monitor started!\n[INFO] [battery_monitor]: Battery: 100.0%\n[INFO] [battery_monitor]: Battery: 99.5%\n[INFO] [battery_monitor]: Battery: 99.0%"
+                output={`[INFO] [battery_monitor]: Battery Monitor started!
+[INFO] [battery_monitor]: Battery: 100.0%
+[INFO] [battery_monitor]: Battery: 99.5%
+[INFO] [battery_monitor]: Battery: 99.0%`}
                 title="Terminal 1: Publisher"
               />
             </div>
             <div>
               <TerminalBlock 
                 command="python3 dashboard.py"
-                output="[INFO] [dashboard]: Dashboard started! Waiting for data...\n[INFO] [dashboard]: Battery: 99.5% [OK]\n[INFO] [dashboard]: Battery: 99.0% [OK]\n[INFO] [dashboard]: Battery: 98.5% [OK]"
+                output={`[INFO] [dashboard]: Dashboard started! Waiting for data...
+[INFO] [dashboard]: Battery: 99.5% [OK]
+[INFO] [dashboard]: Battery: 99.0% [OK]
+[INFO] [dashboard]: Battery: 98.5% [OK]`}
                 title="Terminal 2: Subscriber"
               />
             </div>
@@ -949,19 +965,25 @@ if __name__ == '__main__':
             <div className="p-4 bg-zinc-50 rounded-lg">
               <h4 className="font-bold text-zinc-900 mb-2">ros2 topic list</h4>
               <p className="text-zinc-600 text-sm mb-2">Show all active topics</p>
-              <TerminalBlock command="ros2 topic list" output="/battery_level\n/parameter_events\n/rosout" />
+              <TerminalBlock command="ros2 topic list" output={`/battery_level
+/parameter_events
+/rosout`} />
             </div>
 
             <div className="p-4 bg-zinc-50 rounded-lg">
               <h4 className="font-bold text-zinc-900 mb-2">ros2 topic info &lt;topic&gt;</h4>
               <p className="text-zinc-600 text-sm mb-2">Get details about a topic</p>
-              <TerminalBlock command="ros2 topic info /battery_level" output="Type: std_msgs/msg/Float32\nPublisher count: 1\nSubscription count: 2" />
+              <TerminalBlock command="ros2 topic info /battery_level" output={`Type: std_msgs/msg/Float32
+Publisher count: 1
+Subscription count: 2`} />
             </div>
 
             <div className="p-4 bg-zinc-50 rounded-lg">
               <h4 className="font-bold text-zinc-900 mb-2">ros2 topic echo &lt;topic&gt;</h4>
               <p className="text-zinc-600 text-sm mb-2">Subscribe and print messages from terminal</p>
-              <TerminalBlock command="ros2 topic echo /battery_level" output="data: 85.5\n---\ndata: 85.0" />
+              <TerminalBlock command="ros2 topic echo /battery_level" output={`data: 85.5
+---
+data: 85.0`} />
             </div>
 
             <div className="p-4 bg-zinc-50 rounded-lg">
