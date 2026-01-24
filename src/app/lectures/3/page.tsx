@@ -82,8 +82,8 @@ class Dashboard(Node):
         super().__init__('dashboard')
         
         # Store latest values
-        self.battery_level = None
-        self.speed = None
+        self.battery_level = 0.0
+        self.speed = 0.0
         
         # Subscribe to BOTH topics
         self.battery_sub = self.create_subscription(
@@ -105,10 +105,10 @@ class Dashboard(Node):
         self.display_status()
     
     def display_status(self):
-        battery_str = f"{self.battery_level:.1f}%" if self.battery_level else "---"
-        speed_str = f"{self.speed:.2f} m/s" if self.speed else "---"
-        
-        self.get_logger().info(f"Battery: {battery_str} | Speed: {speed_str}")
+        # Simple display - just print both values
+        self.get_logger().info(
+            f"Battery: {self.battery_level:.1f}% | Speed: {self.speed:.2f} m/s"
+        )
 
 def main(args=None):
     rclpy.init(args=args)
@@ -314,52 +314,6 @@ def main(args=None):
 if __name__ == '__main__':
     main()`;
 
-  const performanceMonitorCode = `import rclpy
-from rclpy.node import Node
-from std_msgs.msg import Float32, String
-
-class PerformanceMonitor(Node):
-    def __init__(self):
-        super().__init__('performance_monitor')
-        
-        self.battery = 100.0
-        self.speed = 0.0
-        
-        # Subscribe to both
-        self.create_subscription(Float32, 'battery_level', self.battery_cb, 10)
-        self.create_subscription(Float32, 'robot/speed_filtered', self.speed_cb, 10)
-        
-        # Publish alerts
-        self.alert_pub = self.create_publisher(String, 'robot/alerts', 10)
-        
-        self.get_logger().info("Performance Monitor started!")
-    
-    def battery_cb(self, msg):
-        self.battery = msg.data
-        self.check_performance()
-    
-    def speed_cb(self, msg):
-        self.speed = msg.data
-        self.check_performance()
-    
-    def check_performance(self):
-        # Alert if going fast with low battery
-        if self.speed > 1.5 and self.battery < 30:
-            alert = String()
-            alert.data = f"HIGH SPEED + LOW BATTERY: {self.speed:.2f}m/s @ {self.battery:.1f}%"
-            self.alert_pub.publish(alert)
-            self.get_logger().warn(alert.data)
-
-def main(args=None):
-    rclpy.init(args=args)
-    node = PerformanceMonitor()
-    rclpy.spin(node)
-    node.destroy_node()
-    rclpy.shutdown()
-
-if __name__ == '__main__':
-    main()`;
-
   return (
     <div className="bg-white min-h-screen font-sans selection:bg-zinc-200 selection:text-zinc-900">
       
@@ -450,6 +404,17 @@ if __name__ == '__main__':
             code={speedSensorCode}
           />
           
+          <div className="mt-6">
+            <TerminalBlock 
+              command="ros2 run my_robot_pkg speed_sensor"
+              output={`[INFO] [speed_sensor]: Speed Sensor started!
+[INFO] [speed_sensor]: Speed: 1.23 m/s
+[INFO] [speed_sensor]: Speed: 0.87 m/s
+[INFO] [speed_sensor]: Speed: 1.15 m/s`}
+              title="Terminal Output"
+            />
+          </div>
+          
           <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
             <h4 className="font-bold text-amber-900 mb-2">💡 Notice the Noise</h4>
             <p className="text-amber-800 text-sm">
@@ -464,6 +429,18 @@ if __name__ == '__main__':
             filename="dashboard.py"
             code={multiTopicDashboardCode}
           />
+          
+          <div className="mt-6">
+            <TerminalBlock 
+              command="ros2 run my_robot_pkg dashboard"
+              output={`[INFO] [dashboard]: Dashboard started! Waiting for data...
+[INFO] [dashboard]: Battery: 100.0% | Speed: 0.00 m/s
+[INFO] [dashboard]: Battery: 100.0% | Speed: 1.23 m/s
+[INFO] [dashboard]: Battery: 99.5% | Speed: 1.23 m/s
+[INFO] [dashboard]: Battery: 99.5% | Speed: 0.87 m/s`}
+              title="Terminal Output"
+            />
+          </div>
           
           <div className="mt-6 grid md:grid-cols-2 gap-4">
             <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
@@ -483,6 +460,17 @@ if __name__ == '__main__':
             filename="safety_monitor.py"
             code={safetyMonitorCode}
           />
+          
+          <div className="mt-6">
+            <TerminalBlock 
+              command="ros2 run my_robot_pkg safety_monitor"
+              output={`[INFO] [safety_monitor]: Safety Monitor active!
+[WARN] [safety_monitor]: LOW BATTERY: 18.5%
+[WARN] [safety_monitor]: LOW BATTERY: 18.0%
+[WARN] [safety_monitor]: LOW BATTERY: 17.5%`}
+              title="Terminal Output (when battery drops below 20%)"
+            />
+          </div>
           
           <div className="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-lg">
             <h4 className="font-bold text-blue-900 mb-2">🔍 Different Log Levels</h4>
@@ -542,7 +530,7 @@ if __name__ == '__main__':
           <div className="mb-8">
             <h3 className="text-xl font-bold text-zinc-900 mb-4">Look at Our Speed Sensor Output:</h3>
             <TerminalBlock 
-              command="python3 speed_sensor.py"
+              command="ros2 run my_robot_pkg speed_sensor"
               output={`[INFO] [speed_sensor]: Speed: 1.23 m/s
 [INFO] [speed_sensor]: Speed: 0.87 m/s
 [INFO] [speed_sensor]: Speed: 1.15 m/s
@@ -776,18 +764,26 @@ if __name__ == '__main__':
 
           <div className="space-y-4 mb-8">
             <TerminalBlock 
-              command="python3 speed_sensor.py"
-              output={`[INFO] [speed_sensor]: Speed: 1.23 m/s
+              command="ros2 run my_robot_pkg speed_sensor"
+              output={`[INFO] [speed_sensor]: Speed Sensor started!
+[INFO] [speed_sensor]: Speed: 1.23 m/s
 [INFO] [speed_sensor]: Speed: 0.87 m/s
-[INFO] [speed_sensor]: Speed: 1.15 m/s`}
+[INFO] [speed_sensor]: Speed: 1.15 m/s
+[INFO] [speed_sensor]: Speed: 0.72 m/s
+[INFO] [speed_sensor]: Speed: 1.28 m/s
+[INFO] [speed_sensor]: Speed: 0.95 m/s`}
               title="Terminal 1: Speed Sensor"
             />
 
             <TerminalBlock 
-              command="python3 sensor_filter.py"
-              output={`[INFO] [sensor_filter]: Raw: 1.23 -> Filtered: 1.23
+              command="ros2 run my_robot_pkg sensor_filter"
+              output={`[INFO] [sensor_filter]: Sensor Filter started!
+[INFO] [sensor_filter]: Raw: 1.23 -> Filtered: 1.23
 [INFO] [sensor_filter]: Raw: 0.87 -> Filtered: 1.05
-[INFO] [sensor_filter]: Raw: 1.15 -> Filtered: 1.08`}
+[INFO] [sensor_filter]: Raw: 1.15 -> Filtered: 1.08
+[INFO] [sensor_filter]: Raw: 0.72 -> Filtered: 0.99
+[INFO] [sensor_filter]: Raw: 1.28 -> Filtered: 1.05
+[INFO] [sensor_filter]: Raw: 0.95 -> Filtered: 0.99`}
               title="Terminal 2: Filter"
             />
 
@@ -796,6 +792,8 @@ if __name__ == '__main__':
               output={`data: 1.05
 ---
 data: 1.08
+---
+data: 0.99
 ---`}
               title="Terminal 3: Verify Output"
             />
@@ -901,6 +899,18 @@ data: 1.08
             filename="status_aggregator.py"
             code={statusAggregatorCode}
           />
+          
+          <div className="mt-6">
+            <TerminalBlock 
+              command="ros2 run my_robot_pkg status_aggregator"
+              output={`[INFO] [status_aggregator]: Status Aggregator started!
+[INFO] [status_aggregator]: [OK] Battery: 85.0% | Speed: 1.02 m/s
+[INFO] [status_aggregator]: [OK] Battery: 84.5% | Speed: 0.98 m/s
+[INFO] [status_aggregator]: [WARNING] Battery: 45.0% | Speed: 1.05 m/s
+[INFO] [status_aggregator]: [CRITICAL] Battery: 18.0% | Speed: 0.95 m/s`}
+              title="Terminal Output"
+            />
+          </div>
         </LectureSlide>
 
         {/* Slide 17: Updated Dashboard */}
@@ -914,6 +924,18 @@ data: 1.08
             code={updatedDashboardCode}
           />
 
+          <div className="mt-6">
+            <TerminalBlock 
+              command="ros2 run my_robot_pkg dashboard"
+              output={`[INFO] [dashboard]: Dashboard v2 started!
+[INFO] [dashboard]: Raw: 1.23 | Filtered: 1.08
+[INFO] [dashboard]: Raw: 0.87 | Filtered: 1.02
+[INFO] [dashboard]: Status: [OK] Battery: 85.0% | Speed: 1.02 m/s
+[INFO] [dashboard]: Raw: 1.15 | Filtered: 0.99`}
+              title="Terminal Output"
+            />
+          </div>
+          
           <div className="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-lg">
             <h4 className="font-bold text-blue-900 mb-2">💡 Notice</h4>
             <p className="text-blue-800 text-sm">
@@ -1108,17 +1130,15 @@ min: 0.499s max: 0.501s`} />
               </ul>
             </div>
 
-            <div className="p-6 bg-amber-50 border border-amber-200 rounded-xl">
-              <h4 className="font-bold text-amber-900 mb-2">💡 Hint: Store Both Values</h4>
-              <p className="text-amber-800 text-sm">
-                Store battery and speed in class variables (like the aggregator). Check the condition in both callbacks, or use a timer.
-              </p>
+            <div className="p-6 bg-blue-50 border border-blue-100 rounded-xl">
+              <h4 className="font-bold text-blue-900 mb-2">🎯 Expected Output</h4>
+              <TerminalBlock 
+                command="ros2 run my_robot_pkg performance_monitor"
+                output={`[INFO] [performance_monitor]: Performance Monitor started!
+[WARN] [performance_monitor]: HIGH SPEED + LOW BATTERY: 1.8m/s @ 25.0%`}
+                title="When conditions are met"
+              />
             </div>
-
-            <CodeBlock 
-              filename="performance_monitor.py (starter)"
-              code={performanceMonitorCode}
-            />
           </div>
         </LectureSlide>
 
