@@ -17,7 +17,7 @@ export default function Lecture4() {
   const slides: SlideInfo[] = [
     { id: 'slide-1', title: 'Lecture 4: Services', icon: BookOpen },
     { id: 'slide-2', title: 'Homework Review', icon: Check },
-    { id: 'slide-3', title: 'Review: Topics', icon: RefreshCw },
+    { id: 'slide-3', title: 'Review: What Topics Do', icon: RefreshCw },
     { id: 'slide-4', title: 'The Problem', icon: HelpCircle },
     { id: 'slide-5', title: 'What is a Service?', icon: PhoneCall },
     { id: 'slide-6', title: 'Topics vs Services', icon: ArrowLeftRight },
@@ -34,8 +34,8 @@ export default function Lecture4() {
     { id: 'slide-17', title: 'Service Client Code', icon: Code },
     { id: 'slide-18', title: 'Understanding the Client', icon: Search },
     { id: 'slide-19', title: 'Running Both Nodes', icon: Activity },
-    { id: 'slide-20', title: 'Speed Control Service', icon: Bot },
-    { id: 'slide-21', title: 'CLI Tools', icon: Terminal },
+    { id: 'slide-20', title: 'Safety Advisor Service', icon: Bot },
+    { id: 'slide-21', title: 'CLI Tools for Services', icon: Terminal },
     { id: 'slide-22', title: 'Key Takeaways', icon: Lightbulb },
     { id: 'slide-23', title: 'Summary', icon: Layout },
     { id: 'slide-24', title: 'Homework', icon: Target },
@@ -369,8 +369,8 @@ ament_package()`;
           </div>
         </LectureSlide>
 
-        {/* Slide 3: Review Topics */}
-        <LectureSlide id="slide-3" title="Review: What Topics Do" subtitle="Continuous Data Streams" icon={RefreshCw}>
+        {/* Slide 3: Review - What Topics Do */}
+        <LectureSlide id="slide-3" title="Review: What Topics Do" subtitle="What We've Learned So Far" icon={RefreshCw}>
           <div className="mb-8 p-6 bg-zinc-900 text-white rounded-xl text-center">
             <p className="text-2xl font-medium">
               Topics are for <span className="text-green-400">continuous streams</span> of data.
@@ -395,13 +395,18 @@ ament_package()`;
             </div>
           </div>
 
-          <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+          <div className="p-4 bg-green-50 border border-green-200 rounded-lg mb-6">
             <h4 className="font-bold text-green-900 mb-2">✅ Topics are great for:</h4>
             <ul className="text-green-800 text-sm space-y-1">
               <li>• Sensor data (battery, speed, camera images)</li>
               <li>• Status updates sent regularly</li>
               <li>• One-to-many communication</li>
             </ul>
+          </div>
+
+          <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+            <h4 className="font-bold text-amber-900 mb-2">🤔 But what about...</h4>
+            <p className="text-amber-800 text-sm">What if you need to ask a question and get an answer? What if you need confirmation that something happened?</p>
           </div>
         </LectureSlide>
 
@@ -596,7 +601,11 @@ ament_package()`;
         </LectureSlide>
 
         {/* Slide 8: What We're Building */}
-        <LectureSlide id="slide-8" title="What We're Building Today" subtitle="The Problem We're Solving" icon={Target}>
+        <LectureSlide id="slide-8" title="What We're Building Today" subtitle="Hands-On Project" icon={Target}>
+          <div className="mb-6 p-4 bg-zinc-900 text-white rounded-xl text-center">
+            <p className="text-lg">Now that we understand services, let&apos;s build something real.</p>
+          </div>
+
           <div className="mb-8">
             <h3 className="text-2xl font-bold text-zinc-900 mb-4">🎯 Our Goal: Control Robot Speed Safely</h3>
             <p className="text-lg text-zinc-600">
@@ -1084,11 +1093,15 @@ my_robot_interfaces.srv.SetTargetSpeed_Response(
           </div>
         </LectureSlide>
 
-        {/* Slide 20: Speed Control Service */}
-        <LectureSlide id="slide-20" title="Another Example: Safety Advisor" subtitle="Integrating with Lecture 3 Topics" icon={Bot}>
+        {/* Slide 20: Safety Advisor Service */}
+        <LectureSlide id="slide-20" title="Safety Advisor Service" subtitle="Combining Topics with Services" icon={Bot}>
+          <div className="mb-6 p-4 bg-zinc-900 text-white rounded-xl text-center">
+            <p className="text-lg">Let&apos;s see how services and topics from previous lectures work <strong>together</strong>.</p>
+          </div>
+
           <div className="mb-6">
             <p className="text-lg text-zinc-600">
-              Let&apos;s create a service that combines data from our existing topics. This shows how services and topics work together.
+              This example creates a service that subscribes to our existing <code className="bg-zinc-100 px-2 py-1 rounded">/battery_level</code> topic and gives safety recommendations.
             </p>
           </div>
 
