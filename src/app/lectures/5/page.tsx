@@ -1170,7 +1170,7 @@ string task_id`}
           <div className="mt-6 p-4 bg-zinc-50 rounded-lg">
             <h4 className="font-bold text-zinc-900 mb-3">Test it:</h4>
             <TerminalBlock 
-              command="ros2 service call /get_task_status my_robot_interfaces/srv/GetTaskStatus \"{}\""
+              command={`ros2 service call /get_task_status my_robot_interfaces/srv/GetTaskStatus "{}"`}
               output={`response:
   has_active_task: true
   task_id: 'TASK-0001'
@@ -1264,7 +1264,7 @@ string task_id`}
               <h4 className="font-bold text-zinc-900">Check initial status (robot is idle)</h4>
             </div>
             <TerminalBlock 
-              command="ros2 service call /get_task_status my_robot_interfaces/srv/GetTaskStatus \"{}\""
+              command={`ros2 service call /get_task_status my_robot_interfaces/srv/GetTaskStatus "{}"`}
               output={`has_active_task: false
 status: 'idle'
 message: 'No active task. Robot is idle.'`}
@@ -1288,7 +1288,7 @@ task_id: 'TASK-0001'`}
               <h4 className="font-bold text-zinc-900">Check status (now active)</h4>
             </div>
             <TerminalBlock 
-              command="ros2 service call /get_task_status my_robot_interfaces/srv/GetTaskStatus \"{}\""
+              command={`ros2 service call /get_task_status my_robot_interfaces/srv/GetTaskStatus "{}"`}
               output={`has_active_task: true
 task_id: 'TASK-0001'
 status: 'active'`}
