@@ -140,7 +140,7 @@ export default function HomePage() {
       number: 5,
       title: 'Task Management Systems',
       description: 'Building service-based control systems with validation and error handling.',
-      status: 'current',
+      status: 'completed',
       topics: ['Multi-Service Nodes', 'Validation', 'Error Handling', 'Task Manager'],
       href: '/lectures/5',
     },
@@ -148,8 +148,16 @@ export default function HomePage() {
       number: 6,
       title: 'Parameters',
       description: 'Making nodes configurable with parameters and YAML files.',
-      status: 'upcoming',
+      status: 'current',
       topics: ['Parameters', 'Configuration', 'YAML', 'Dynamic Settings'],
+      href: '/lectures/6',
+    },
+    {
+      number: 7,
+      title: 'Actions',
+      description: 'Long-running tasks with progress feedback and cancellation.',
+      status: 'upcoming',
+      topics: ['Actions', 'Goals', 'Feedback', 'Results'],
     },
   ];
 
