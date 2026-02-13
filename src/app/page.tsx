@@ -148,7 +148,7 @@ export default function HomePage() {
       number: 6,
       title: 'Parameters',
       description: 'Making nodes configurable with parameters and YAML files.',
-      status: 'current',
+      status: 'completed',
       topics: ['Parameters', 'Configuration', 'YAML', 'Dynamic Settings'],
       href: '/lectures/6',
     },
@@ -156,8 +156,16 @@ export default function HomePage() {
       number: 7,
       title: 'Actions',
       description: 'Long-running tasks with progress feedback and cancellation.',
+      status: 'current',
+      topics: ['Actions', 'Goals', 'Feedback', 'Cancel'],
+      href: '/lectures/7',
+    },
+    {
+      number: 8,
+      title: 'Launch Files',
+      description: 'Composing multi-node systems with a single command.',
       status: 'upcoming',
-      topics: ['Actions', 'Goals', 'Feedback', 'Results'],
+      topics: ['Launch Files', 'Node Composition', 'System Config'],
     },
   ];
 
