@@ -156,7 +156,7 @@ export default function HomePage() {
       number: 7,
       title: 'Actions',
       description: 'Long-running tasks with progress feedback and cancellation.',
-      status: 'current',
+      status: 'completed',
       topics: ['Actions', 'Goals', 'Feedback', 'Cancel'],
       href: '/lectures/7',
     },
@@ -164,8 +164,16 @@ export default function HomePage() {
       number: 8,
       title: 'Launch Files',
       description: 'Composing multi-node systems with a single command.',
-      status: 'upcoming',
+      status: 'current',
       topics: ['Launch Files', 'Node Composition', 'System Config'],
+      href: '/lectures/8',
+    },
+    {
+      number: 9,
+      title: 'Tools & Debugging',
+      description: 'Visualization, introspection, and debugging tools for ROS 2 systems.',
+      status: 'upcoming',
+      topics: ['rqt_graph', 'Visualization', 'Debugging', 'Introspection'],
     },
   ];
 
